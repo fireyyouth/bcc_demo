@@ -38,5 +38,11 @@ int udp_counter(struct xdp_md *ctx)
     u64 *exist = map.lookup(&key);
     bpf_trace_printk("(%x, %u) => %p\n", addr, port, exist);
 
+    u8 *payload = (u8 *)udp + sizeof(*udp);
+    u32 size = ntohs(udp->len) - sizeof(*udp);
+    if (payload + size <= (u8 *)data_end && size == 1) { // confusing: cannot compile when written as "size > 0"
+        payload[0] = 'A';
+    }
+
     return XDP_PASS;
 }
