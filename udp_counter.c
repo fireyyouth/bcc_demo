@@ -39,8 +39,7 @@ int udp_counter(struct xdp_md *ctx)
     bpf_trace_printk("(%x, %u) => %p\n", addr, port, exist);
 
     u8 *payload = (u8 *)udp + sizeof(*udp);
-    u32 size = ntohs(udp->len) - sizeof(*udp);
-    if (payload + size <= (u8 *)data_end && size == 1) { // confusing: cannot compile when written as "size > 0"
+    if (payload + 1 <= (u8 *)data_end) { // confusing: cannot compile if written as (payload < data_end)
         payload[0] = 'A';
     }
 
